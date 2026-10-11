@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Виды деятельности в сети Интернет — Найди пару</title>
+    <style>
+        :root {
+            --color-bg: #ffffff;
+            --color-surface: #f8fafc;
+            --color-border: #e2e8f0;
+            --color-text: #1e293b;
+            --color-text-secondary: #64748b;
+            --color-accent: #3b82f6;
+            --color-accent-hover: #2563eb;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 14px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        #app {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Start Screen */
+        .start-screen {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .start-screen h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--color-text);
+        }
+
+        .start-screen p {
+            font-size: 1.1rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .difficulty-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 400px;
+            margin: 0 auto 32px;
+        }
+
+        .difficulty-btn {
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .difficulty-btn:hover {
+            border-color: var(--color-accent);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .difficulty-btn:active {
+            transform: translateY(0);
+        }
+
+        .difficulty-btn h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--color-text);
+        }
+
+        .difficulty-btn p {
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+            margin: 0;
+        }
+
+        /* Game Screen */
+        .game-screen {
+            padding: 20px 0;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .game-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .game-stats {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--color-accent);
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            background: var(--color-accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 44px;
+        }
+
+        .btn:hover {
+            background: var(--color-accent-hover);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: var(--color-surface);
+            color: var(--color-text);
+            border: 2px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-border);
+        }
+
+        /* Game Board */
+        .game-board {
+            display: grid;
+            gap: 12px;
+            margin: 0 auto;
+            max-width: 900px;
+        }
+
+        .game-board.easy {
+            grid-template-columns: repeat(4, 1fr);
+            max-width: 500px;
+        }
+
+        .game-board.medium {
+            grid-template-columns: repeat(4, 1fr);
+            max-width: 600px;
+        }
+
+        .game-board.hard {
+            grid-template-columns: repeat(5, 1fr);
+            max-width: 900px;
+        }
+
+        .game-board.expert {
+            grid-template-columns: repeat(6, 1fr);
+            max-width: 1000px;
+        }
+
+        /* Card */
+        .card {
+            aspect-ratio: 1;
+            perspective: 1000px;
+            cursor: pointer;
+            min-height: 80px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card.matched .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-front {
+            background: var(--color-accent);
+            color: white;
+            font-size: 2rem;
+        }
+
+        .card-back {
+            background: white;
+            border: 2px solid var(--color-border);
+            transform: rotateY(180deg);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--color-text);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.3;
+        }
+
+        .card.matched .card-back {
+            background: #ecfdf5;
+            border-color: var(--color-success);
+        }
+
+        .card:hover:not(.flipped):not(.matched) .card-front {
+            box-shadow: var(--shadow-md);
+            transform: scale(1.02);
+        }
+
+        /* End Screen */
+        .end-screen {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .end-screen h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--color-success);
+        }
+
+        .end-screen p {
+            font-size: 1.2rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .final-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .final-stat {
+            text-align: center;
+        }
+
+        .final-stat-value {
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--color-accent);
+            display: block;
+        }
+
+        .final-stat-label {
+            font-size: 1rem;
+            color: var(--color-text-secondary);
+            margin-top: 8px;
+        }
+
+        .end-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .start-screen h1 {
+                font-size: 1.5rem;
+            }
+
+            .game-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .game-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .game-board.hard {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .game-board.expert {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .card-back {
+                font-size: 0.75rem;
+                padding: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+
+            .game-board.hard {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .game-board.expert {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .final-stats {
+                gap: 24px;
+            }
+
+            .final-stat-value {
+                font-size: 2rem;
+            }
+        }
+
+        /* Accessibility */
+        .btn:focus-visible,
+        .difficulty-btn:focus-visible,
+        .card:focus-visible {
+            outline: 3px solid var(--color-accent);
+            outline-offset: 2px;
+        }
+
+        .card:focus-visible {
+            outline-offset: 4px;
+        }
+    </style>
+</head>
+<body>
+    <main id="app"></main>
+
+    <script>
+        // Constants
+        const CARD_PAIRS = [
+            { id: 1, type: 'Познавательная', example: 'Чтение электронной энциклопедии' },
+            { id: 2, type: 'Познавательная', example: 'Просмотр научно-популярного видео' },
+            { id: 3, type: 'Учебная', example: 'Прохождение тестов на платформе' },
+            { id: 4, type: 'Учебная', example: 'Просмотр видеоурока' },
+            { id: 5, type: 'Коммуникативная', example: 'Переписка в мессенджере' },
+            { id: 6, type: 'Коммуникативная', example: 'Участие в форуме' },
+            { id: 7, type: 'Досуговая', example: 'Прослушивание музыки онлайн' },
+            { id: 8, type: 'Досуговая', example: 'Онлайн-игры' },
+            { id: 9, type: 'Функционирование сети', example: 'Передача пакетов данных' },
+            { id: 10, type: 'Функционирование сети', example: 'Работа протоколов TCP/IP' },
+            { id: 11, type: 'Функционирование сети', example: 'Маршрутизация трафика между серверами' },
+            { id: 12, type: 'Соревновательная', example: 'Киберспорт' },
+            { id: 13, type: 'Соревновательная', example: 'Участие в онлайн-турнирах' }
+        ];
+
+        const DIFFICULTY_LEVELS = {
+            easy: { pairs: 4, label: 'Лёгкий', description: '4 пары — 8 карточек' },
+            medium: { pairs: 6, label: 'Средний', description: '6 пар — 12 карточек' },
+            hard: { pairs: 10, label: 'Сложный', description: '10 пар — 20 карточек' },
+            expert: { pairs: 12, label: 'Эксперт', description: '12 пар — 24 карточки' }
+        };
+
+        // State
+        let state = {
+            screen: 'start', // start, game, end
+            difficulty: null,
+            cards: [],
+            flippedCards: [],
+            matchedPairs: 0,
+            moves: 0,
+            timer: 0,
+            timerInterval: null,
+            gameStarted: false
+        };
+
+        // Render functions
+        function render() {
+            const app = document.getElementById('app');
+            app.innerHTML = '';
+
+            switch (state.screen) {
+                case 'start':
+                    renderStartScreen(app);
+                    break;
+                case 'game':
+                    renderGameScreen(app);
+                    break;
+                case 'end':
+                    renderEndScreen(app);
+                    break;
+            }
+        }
+
+        function renderStartScreen(container) {
+            const screen = document.createElement('div');
+            screen.className = 'start-screen';
+
+            const title = document.createElement('h1');
+            title.textContent = 'Виды деятельности в сети Интернет';
+            screen.appendChild(title);
+
+            const subtitle = document.createElement('p');
+            subtitle.textContent = 'Найдите пару: пример деятельности и её тип';
+            screen.appendChild(subtitle);
+
+            const selector = document.createElement('div');
+            selector.className = 'difficulty-selector';
+
+            Object.entries(DIFFICULTY_LEVELS).forEach(([key, level]) => {
+                const btn = document.createElement('button');
+                btn.className = 'difficulty-btn';
+                btn.setAttribute('aria-label', `Начать игру на ${level.label} уровне сложности`);
+
+                const h3 = document.createElement('h3');
+                h3.textContent = level.label;
+                btn.appendChild(h3);
+
+                const p = document.createElement('p');
+                p.textContent = level.description;
+                btn.appendChild(p);
+
+                btn.addEventListener('click', () => startGame(key));
+                selector.appendChild(btn);
+            });
+
+            screen.appendChild(selector);
+            container.appendChild(screen);
+        }
+
+        function renderGameScreen(container) {
+            const screen = document.createElement('div');
+            screen.className = 'game-screen';
+
+            // Header
+            const header = document.createElement('div');
+            header.className = 'game-header';
+
+            const title = document.createElement('h1');
+            title.className = 'game-title';
+            title.textContent = 'Найди пару';
+            header.appendChild(title);
+
+            const stats = document.createElement('div');
+            stats.className = 'game-stats';
+
+            const movesStat = document.createElement('div');
+            movesStat.className = 'stat';
+            const movesLabel = document.createElement('div');
+            movesLabel.className = 'stat-label';
+            movesLabel.textContent = 'Ходы';
+            movesStat.appendChild(movesLabel);
+            const movesValue = document.createElement('div');
+            movesValue.className = 'stat-value';
+            movesValue.textContent = state.moves;
+            movesStat.appendChild(movesValue);
+            stats.appendChild(movesStat);
+
+            const timerStat = document.createElement('div');
+            timerStat.className = 'stat';
+            const timerLabel = document.createElement('div');
+            timerLabel.className = 'stat-label';
+            timerLabel.textContent = 'Время';
+            timerStat.appendChild(timerLabel);
+            const timerValue = document.createElement('div');
+            timerValue.className = 'stat-value';
+            timerValue.textContent = formatTime(state.timer);
+            timerStat.appendChild(timerValue);
+            stats.appendChild(timerStat);
+
+            header.appendChild(stats);
+
+            const controls = document.createElement('div');
+            controls.className = 'game-controls';
+
+            const resetBtn = document.createElement('button');
+            resetBtn.className = 'btn btn-secondary';
+            resetBtn.textContent = 'Сбросить';
+            resetBtn.addEventListener('click', resetGame);
+            controls.appendChild(resetBtn);
+
+            const menuBtn = document.createElement('button');
+            menuBtn.className = 'btn btn-secondary';
+            menuBtn.textContent = 'Меню';
+            menuBtn.addEventListener('click', goToMenu);
+            controls.appendChild(menuBtn);
+
+            header.appendChild(controls);
+            screen.appendChild(header);
+
+            // Board
+            const board = document.createElement('div');
+            board.className = `game-board ${state.difficulty}`;
+            board.setAttribute('role', 'grid');
+            board.setAttribute('aria-label', 'Игровое поле');
+
+            state.cards.forEach((card, index) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'card';
+                cardEl.setAttribute('role', 'button');
+                cardEl.setAttribute('tabindex', '0');
+                cardEl.setAttribute('aria-label', `Карточка ${index + 1}`);
+
+                if (card.flipped || card.matched) {
+                    cardEl.classList.add('flipped');
+                }
+                if (card.matched) {
+                    cardEl.classList.add('matched');
+                }
+
+                const inner = document.createElement('div');
+                inner.className = 'card-inner';
+
+                const front = document.createElement('div');
+                front.className = 'card-front';
+                front.textContent = '?';
+                inner.appendChild(front);
+
+                const back = document.createElement('div');
+                back.className = 'card-back';
+                back.textContent = card.content;
+                inner.appendChild(back);
+
+                cardEl.appendChild(inner);
+
+                if (!card.matched) {
+                    cardEl.addEventListener('click', () => flipCard(index));
+                    cardEl.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            flipCard(index);
+                        }
+                    });
+                }
+
+                board.appendChild(cardEl);
+            });
+
+            screen.appendChild(board);
+            container.appendChild(screen);
+        }
+
+        function renderEndScreen(container) {
+            const screen = document.createElement('div');
+            screen.className = 'end-screen';
+
+            const title = document.createElement('h1');
+            title.textContent = 'Поздравляем!';
+            screen.appendChild(title);
+
+            const message = document.createElement('p');
+            message.textContent = 'Вы нашли все пары!';
+            screen.appendChild(message);
+
+            const stats = document.createElement('div');
+            stats.className = 'final-stats';
+
+            const movesStat = document.createElement('div');
+            movesStat.className = 'final-stat';
+            const movesValue = document.createElement('span');
+            movesValue.className = 'final-stat-value';
+            movesValue.textContent = state.moves;
+            movesStat.appendChild(movesValue);
+            const movesLabel = document.createElement('div');
+            movesLabel.className = 'final-stat-label';
+            movesLabel.textContent = 'Ходов';
+            movesStat.appendChild(movesLabel);
+            stats.appendChild(movesStat);
+
+            const timeStat = document.createElement('div');
+            timeStat.className = 'final-stat';
+            const timeValue = document.createElement('span');
+            timeValue.className = 'final-stat-value';
+            timeValue.textContent = formatTime(state.timer);
+            timeStat.appendChild(timeValue);
+            const timeLabel = document.createElement('div');
+            timeLabel.className = 'final-stat-label';
+            timeLabel.textContent = 'Время';
+            timeStat.appendChild(timeLabel);
+            stats.appendChild(timeStat);
+
+            screen.appendChild(stats);
+
+            const actions = document.createElement('div');
+            actions.className = 'end-actions';
+
+            const playAgainBtn = document.createElement('button');
+            playAgainBtn.className = 'btn';
+            playAgainBtn.textContent = 'Играть снова';
+            playAgainBtn.addEventListener('click', () => startGame(state.difficulty));
+            actions.appendChild(playAgainBtn);
+
+            const menuBtn = document.createElement('button');
+            menuBtn.className = 'btn btn-secondary';
+            menuBtn.textContent = 'В меню';
+            menuBtn.addEventListener('click', goToMenu);
+            actions.appendChild(menuBtn);
+
+            screen.appendChild(actions);
+            container.appendChild(screen);
+        }
+
+        // Handlers
+        function startGame(difficulty) {
+            const level = DIFFICULTY_LEVELS[difficulty];
+            const selectedPairs = CARD_PAIRS.slice(0, level.pairs);
+
+            // Create cards array with both types and examples
+            const cards = [];
+            selectedPairs.forEach(pair => {
+                cards.push({
+                    pairId: pair.id,
+                    content: pair.type,
+                    flipped: false,
+                    matched: false
+                });
+                cards.push({
+                    pairId: pair.id,
+                    content: pair.example,
+                    flipped: false,
+                    matched: false
+                });
+            });
+
+            // Shuffle cards
+            for (let i = cards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cards[i], cards[j]] = [cards[j], cards[i]];
+            }
+
+            state = {
+                ...state,
+                screen: 'game',
+                difficulty: difficulty,
+                cards: cards,
+                flippedCards: [],
+                matchedPairs: 0,
+                moves: 0,
+                timer: 0,
+                gameStarted: false
+            };
+
+            // Start timer on first card flip
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+            }
+
+            render();
+        }
+
+        function flipCard(index) {
+            const card = state.cards[index];
+
+            // Don't flip if already flipped, matched, or two cards already flipped
+            if (card.flipped || card.matched || state.flippedCards.length >= 2) {
+                return;
+            }
+
+            // Start timer on first flip
+            if (!state.gameStarted) {
+                state.gameStarted = true;
+                startTimer();
+            }
+
+            card.flipped = true;
+            state.flippedCards.push(index);
+
+            render();
+
+            // Check for match if two cards are flipped
+            if (state.flippedCards.length === 2) {
+                state.moves++;
+                const [first, second] = state.flippedCards;
+                const card1 = state.cards[first];
+                const card2 = state.cards[second];
+
+                if (card1.pairId === card2.pairId) {
+                    // Match found
+                    setTimeout(() => {
+                        card1.matched = true;
+                        card2.matched = true;
+                        state.matchedPairs++;
+                        state.flippedCards = [];
+                        render();
+
+                        // Check if game is complete
+                        if (state.matchedPairs === DIFFICULTY_LEVELS[state.difficulty].pairs) {
+                            setTimeout(endGame, 500);
+                        }
+                    }, 500);
+                } else {
+                    // No match
+                    setTimeout(() => {
+                        card1.flipped = false;
+                        card2.flipped = false;
+                        state.flippedCards = [];
+                        render();
+                    }, 1000);
+                }
+            }
+        }
+
+        function startTimer() {
+            state.timerInterval = setInterval(() => {
+                state.timer++;
+                render();
+            }, 1000);
+        }
+
+        function resetGame() {
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+            }
+            startGame(state.difficulty);
+        }
+
+        function goToMenu() {
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+            }
+            state.screen = 'start';
+            state.difficulty = null;
+            render();
+        }
+
+        function endGame() {
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+            }
+            state.screen = 'end';
+            render();
+        }
+
+        // Utility functions
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Initialize
+        render();
+    </script>
+</body>
+</html>
